@@ -20,7 +20,9 @@ having the address of 0x2F (the A0 jumper is soldered)
  int aState;
  int aLastState;  
  //end rotary
-
+ int old; 
+ int previous;
+ int movement;
 //create a matrix of trellis panels
 Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
   
@@ -92,9 +94,9 @@ void setup() {
 
   /* the array can be addressed as x,y or with the key number */
   for(int i=0; i<Y_DIM*X_DIM; i++){
-      trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 100, 200))); //addressed with keynum
+      trellis.setPixelColor(i, Wheel(map(i, 0, X_DIM*Y_DIM, 0, 255))); //addressed with keynum
       trellis.show();
-      delay(20);
+      delay(10);
   }
   
   for(int y=0; y<Y_DIM; y++){
@@ -105,27 +107,69 @@ void setup() {
       trellis.registerCallback(x, y, blink);
       trellis.setPixelColor(x, y, 0x000000); //addressed with x,y
       trellis.show(); //show all LEDs
-      delay(20);
+      delay(10);
     }
   }
 
 }
 
-void loop() {
-  aState = digitalRead(outputA); // Reads the "current" state of the outputA
+void getRotary(){
+    aState = digitalRead(outputA); // Reads the "current" state of the outputA
    // If the previous and the current state of the outputA are different, that means a Pulse has occured
    if (aState != aLastState){     
      // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
      if (digitalRead(outputB) != aState) { 
        counter ++;
+        movement = 1;
      } else {
+       movement = 0;
        counter --;
      }
      Serial.print("Position: ");
      Serial.println(counter);
    } 
    aLastState = aState; // Updates the previous state of the outputA with the current state
-  
+
+}
+
+void locateButton(){
+   //button select
+  trellis.setPixelColor(counter, Wheel(map(counter, 0, X_DIM*Y_DIM, 0, 255))); //addressed with keynum
+  trellis.show();
+}
+
+void buttonForward(){
+   //button select
+   old = (counter - 1);
+   trellis.setPixelColor(old, 0x000000); //addressed with x,y
+   trellis.show(); //show all LEDs
+}
+
+void buttonBack(){
+   //button select
+   previous = (counter + 1 );
+   trellis.setPixelColor(previous, 0x000000); //addressed with x,y
+   trellis.show(); //show all LEDs
+}
+
+
+
+void loop() {
+  getRotary();
+  //button select
   trellis.read();
   delay(20);
+  
+  locateButton();
+
+  //turn off surrounding buttons
+  if(movement == 1){
+   buttonForward();
+   }
+  else if(movement == 0){
+   buttonBack();
+  }
+  else{
+  }
+ char buttonNumber = counter;
 }

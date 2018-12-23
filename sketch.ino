@@ -20,9 +20,9 @@ having the address of 0x2F (the A0 jumper is soldered)
  int aState;
  int aLastState;  
  //end rotary
- int old; 
+
  int previous;
- int movement;
+ int movement; //1=forward, 0=back
 //create a matrix of trellis panels
 Adafruit_NeoTrellis t_array[Y_DIM/4][X_DIM/4] = {
   
@@ -140,8 +140,8 @@ void locateButton(){
 
 void buttonForward(){
    //button select
-   old = (counter - 1);
-   trellis.setPixelColor(old, 0x000000); //addressed with x,y
+   previous = (counter - 1);
+   trellis.setPixelColor(previous, 0x000000); //addressed with x,y
    trellis.show(); //show all LEDs
 }
 
@@ -151,7 +151,6 @@ void buttonBack(){
    trellis.setPixelColor(previous, 0x000000); //addressed with x,y
    trellis.show(); //show all LEDs
 }
-
 
 
 void loop() {

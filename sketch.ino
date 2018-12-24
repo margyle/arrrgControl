@@ -1,12 +1,4 @@
-/* This example shows basic usage of the
-MultiTrellis object controlling an array of
-NeoTrellis boards
 
-As is this example shows use of two NeoTrellis boards
-connected together with the leftmost board having the
-default I2C address of 0x2E, and the rightmost board
-having the address of 0x2F (the A0 jumper is soldered)
-*/
 
 #include "Adafruit_NeoTrellis.h"
 
